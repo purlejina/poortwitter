@@ -1,0 +1,72 @@
+#app {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+h4 {
+    margin: 50px 0;
+}
+
+.new-tweet-block {
+    width: 650px;
+}
+
+.value-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.name-wrapper,
+.message-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.name-wrapper {
+    width: 150px;
+}
+
+.message-wrapper {
+    width: calc(100% - 170px);
+}
+
+form input[type="submit"] {
+    float: right;
+    margin-top: 10px;
+}
+
+.sort-header {
+    display: flex;
+    justify-content: space-between;
+    margin: 25px 0 10px 0;
+}
+
+table {
+    width: 650px;
+}
+
+table tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+table td{
+    padding: 10px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+table .tweet-name {
+    max-width: 120px;
+    padding-left: 0;
+}
+
+table .tweet-datetime {
+    min-width: 150px;
+    padding-right: 0;
+    text-align: right;
+}

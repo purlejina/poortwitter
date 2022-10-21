@@ -1,0 +1,103 @@
+{% extends 'web/base.html' %}
+
+{% load static %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'css/index.css' %}?hs={{ random_str }}">
+{% endblock %}
+
+{% block content %}
+<div id="app">
+  <h4>Poor Man's Twitter</h4>
+  <div class="new-tweet-block">
+    <form method="POST" v-on:submit.prevent="createTweet">
+      <div class="value-wrapper">
+        <div class="name-wrapper">
+          <label for="id_name">Name:</label>
+          <input type="text" name="name" maxlength="25" id="id_name" v-model="new_tweet.name">
+        </div>
+        <div class="message-wrapper">
+          <label for="id_message">Message:</label>
+          <input type="text" name="message" maxlength="50" id="id_message" v-model="new_tweet.message">
+        </div>
+      </div>
+      <input type="submit" value="Tweet" :disabled="!new_tweet.name || !new_tweet.message">
+    </form>
+    
+  </div>
+  <div class="all-tweets">
+    <div class="sort-header">
+      <div>Tweets</div>
+      <div class='sort-option'>
+        Sort
+        <select id="sorts" v-model="sort_type" @change="sortChange($event)">
+          <option value='datetime'>Time</option>
+          <option value='name'>Name</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <table>
+        <tr v-for="tweet in tweetList">
+          <td class="tweet-name">[[tweet.name]]</td>
+          <td class="tweet-message">[[tweet.message]]</td>
+          <td class="tweet-datetime">[[tweet.datetime]]</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  </div>
+</div>
+<script>
+  new Vue({
+    delimiters: ["[[", "]]"],
+    el: '#app' ,
+    data: {
+      new_tweet: {
+        name: '',
+        message: ''
+      },
+      sort_type: 'datetime',
+      tweetList: []
+    },
+    created: function() {
+      axios.defaults.xsrfCookieName = 'csrftoken';
+      axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+      axios.defaults.withCredentials = true;
+      let self = this;
+      self.fetch_all_tweets();
+      setInterval(function() {
+        self.fetch_all_tweets();
+      }, 10000);
+    },
+    methods: {
+      createTweet(event) {
+        let elements = event.target.elements;
+        let form_data = new FormData();
+        form_data.append('name', this.new_tweet.name);
+        form_data.append('message', this.new_tweet.message);
+        let self = this;
+        axios.post('/create', form_data).then((response) => {
+          self.fetch_all_tweets();
+        }).catch(error => {
+          console.log('Failed to tweet');
+        });
+        this.new_tweet.name = '';
+        this.new_tweet.message = '';
+      },
+      fetch_all_tweets: function () { 
+        var self = this;
+        axios.get(`/tweets?sort=${this.sort_type}`)
+          .then(function (response) {
+              self.tweetList = response.data;
+          }) 
+          .catch(function (err) { 
+              console.log("Failed to fetch tweets", err)
+          }) 
+      },
+      sortChange(event) {
+        this.fetch_all_tweets();
+      }
+    }
+  })
+</script>
+{% endblock %}

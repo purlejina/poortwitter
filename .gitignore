@@ -1,0 +1,13 @@
+*.pyc
+__pycache__
+.tern-port
+.mypy_cache
+.cache
+!.gitkeep
+
+.DS_Store
+geckodriver.log
+poortwitter/db.sqlite3
+.log
+.env
+/venv/
